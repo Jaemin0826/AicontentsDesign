@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI콘텐츠디자인실무</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+
+            cursor: none; /* 기본 마우스 커서 숨기기 */
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden; /* 스크롤바 숨김 */
+        }
+
+        .background {
+            position: absolute;
+            width: 300vw;
+            height: 300vh;
+            background-image: url('backgroundpattern.png');
+            background-repeat: repeat;
+            transition: transform 0.2s ease-out;
+        }
+
+        .image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 마우스 이벤트 비활성화 */
+        }
+
+        .image-box {
+            position: absolute;
+            width: 20%; /* 이미지 박스 크기 조정 */
+            transition: all 0.5s ease-out;
+            cursor: pointer;
+            pointer-events: auto; /* 마우스 이벤트 활성화 */
+        }
+
+        .image-box img {    
+            width: 120%;
+        }
+
+        .image-box:hover {
+            transform: scale(1.1); /* 이미지 확대 */
+            cursor: none;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 48px;
+        }
+
+        p {
+            font-size: 24px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+
+        .modalbox1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .modal1 {
+            position: absolute;
+            left: 2%;
+            top: 2%;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4.5px);
+            z-index: 100;
+            padding: 10px;
+            color: #ffffff;
+        }
+
+        .modal1 h1 {
+            font-size: 18px;
+        }
+
+        .modal1 p {
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .image-container img:hover{
+            transform: scale(1.1);
+            transition: all 0.5s ease-out;
+        }
+
+        #circle {
+            position: absolute;
+            width: 50px; /* 원의 크기 */
+            height: 50px;
+            background-color: #ffffff;
+            z-index: 10000;
+            border-radius: 50%;
+            pointer-events: none; /* 이 원이 마우스 이벤트에 영향을 받지 않도록 설정 */
+            opacity: 0.7; /* 불투명도 설정 */
+            transform: translate(-50%, -50%); /* 마우스 중앙에 원이 오도록 조정 */
+        }
+
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* 어두운 반투명 배경 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* 높은 z-index로 모든 요소 위에 표시 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-out;
+    cursor: pointer;
+}
+
+.overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.overlay img {
+    width: 30%;
+    height: auto;;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.overlay .close-btn {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+}
+
+.overlay .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 48px;
+    cursor: pointer;
+    padding: 50px 80px;
+    border-radius: 100%;
+    z-index: 10001;
+    transition: all 0.3s ease;
+}
+
+.overlay .nav-btn.left {
+    left: 20px;
+}
+
+.overlay .nav-btn.right {
+    right: 20px;     
+}
+
+.nav-btn.left:hover {
+    font-size: 72px;
+    left: 15px;
+}
+
+.nav-btn.right:hover {
+    font-size: 72px;
+    right: 15px;
+}
+
+.splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+        #splash-screen{
+            font-weight: 400;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-screen" id="splash-screen">AI콘텐츠디자인실무</div> <!-- 시작 화면 -->
+
+    <div id="circle"></div> <!-- 마우스를 따라다닐 원 -->
+
+    <div class="container">
+        <div class="background"></div>
+
+        <div class="modal1">
+            <div class="modalbox1">s
+                <h1>AI Contents Desgin_Final Project</h1>
+                <div class="icon">
+                    <span class="material-symbols-outlined">clear_all</span>
+                    <span class="material-symbols-outlined">close_small</span>
+                </div>
+            </div>
+            <p>생성형 Ai를 사용해 만든<br> <b>인터랙티브</b>포스터 입니다.</p>
+        </div>
+
+            <div class="image-container">
+                <div class="image-box" style="top: -60%; left: -20%;">
+                    <img src="img/image 01.png" alt="Image 10">
+                </div>
+                <div class="image-box" style="top: -60%; left: 10%;">
+                    <img src="img/image 02.png" alt="Image 11">
+                </div>
+                <div class="image-box" style="top: -60%; left: 40%;">
+                    <img src="img/image 03.png" alt="Image 11">
+                </div>
+                <div class="image-box" style="top: -60%; left: 70%;">
+                    <img src="img/image 04.png" alt="Image 11">
+                </div>
+                <div class="image-box" style="top: -60%; left: 100%;">
+                    <img src="img/image 05.png" alt="Image 11">
+                </div>
+                <div class="image-box" style="top: 0%; left: -20%;">
+                    <img src="img/image 06.png" alt="Image 12">
+                </div>
+                <div class="image-box" style="top: 0%; left: 10%;">
+                    <img src="img/image 07.png" alt="Image 12">
+                </div>
+                <div class="image-box" style="top: 0%; left: 40%;">s
+                    <img src="img/image 08.jpg" alt="Image 12">
+                </div>
+                <div class="image-box" style="top: 0%; left: 70%;">
+                    <img src="img/image 09.jpg" alt="Image 12">
+                </div>
+                <div class="image-box" style="top: 0%; left: 100%;">
+                    <img src="img/image 10.jpg" alt="Image 12">
+                </div>
+                <div class="image-box" style="top: 60%; left: -20%;">
+                    <img src="img/image 11.png" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 60%; left: 10%;">
+                    <img src="img/image 12.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 60%; left: 40%;">
+                    <img src="img/image 13.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 60%; left: 70%;">
+                    <img src="img/image 14.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 60%; left: 100%;">
+                    <img src="img/image 15.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 120%; left: -20%;">
+                    <img src="img/image 16.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 120%; left: 10%;">
+                    <img src="img/image 17.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 120%; left: 40%;">
+                    <img src="img/image 18.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 120%; left: 70%;">
+                    <img src="img/image 19.jpg" alt="Image 444">
+                </div>
+                <div class="image-box" style="top: 120%; left: 100%;">
+                    <img src="img/image 20.jpg" alt="Image 444">
+                </div>
+            </div>
+    </div>
+
+    <script>
+      // 기존의 마우스 무브 이벤트
+    document.addEventListener('mousemove', (event) => {
+        const background = document.querySelector('.background');
+        const images = document.querySelectorAll('.image-container img');
+        const moveX = (window.innerWidth / 2 - event.clientX) * 0.6;
+        const moveY = (window.innerHeight / 2 - event.clientY) * 1.6;
+
+        // 배경 이동
+        background.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+        // 각 이미지 이동 (배경과 동일한 움직임 적용)
+        images.forEach((img) => {
+            img.parentElement.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        });
+    });
+
+    const circle = document.getElementById('circle');
+document.addEventListener('mousemove', function(e) {
+    circle.style.left = `${e.clientX}px`;
+    circle.style.top = `${e.clientY}px`;
+});
+
+// 이미지 클릭 시 확대 표시 및 이미지 탐색 기능
+const images = document.querySelectorAll('.image-container img');
+const overlay = document.createElement('div');
+overlay.classList.add('overlay');
+document.body.appendChild(overlay);
+
+let currentIndex = 0;
+
+images.forEach((img, index) => {
+    img.addEventListener('click', function() {
+        currentIndex = index;
+        displayImage(img.src);
+    });
+});
+
+function displayImage(src) {
+    overlay.innerHTML = `
+        <img src="${src}">
+        <div class="close-btn" onclick="closeOverlay()"></div>
+        <button class="nav-btn left" onclick="navigateImage(-1)">&lt;</button>
+        <button class="nav-btn right" onclick="navigateImage(1)">&gt;</button>
+    `;
+    overlay.classList.add('show');
+}
+
+function closeOverlay() {
+    overlay.classList.remove('show');
+}
+
+function navigateImage(direction) {
+    currentIndex += direction;
+    if (currentIndex < 0) {
+        currentIndex = images.length - 1;
+    } else if (currentIndex >= images.length) {
+        currentIndex = 0;
+    }
+    const newSrc = images[currentIndex].src;
+    displayImage(newSrc);
+}
+
+  // 스플래시 화면 제거
+  window.onload = function() {
+            const splashScreen = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 1000); // 애니메이션 지속 시간과 일치
+            }, 2000); // 2초 후에 사라짐
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+    const imageBoxes = document.querySelectorAll(".image-box");
+
+    imageBoxes.forEach(function(box) {
+        box.addEventListener("mouseover", function() {
+            // 현재 호버된 요소 제외하고 나머지 모든 요소의 투명도를 낮춤
+            imageBoxes.forEach(function(otherBox) {
+                if (otherBox !== box) {
+                    otherBox.style.opacity = "0.3";
+                }
+            });
+        });
+
+        box.addEventListener("mouseout", function() {
+            // 모든 요소의 투명도를 원래 상태로 되돌림
+            imageBoxes.forEach(function(otherBox) {
+                otherBox.style.opacity = "1";
+            });
+        });
+    });
+});
+
+function displayImage(src) {
+    overlay.innerHTML = `
+        <img src="${src}" class="overlay-img">
+        <div class="close-btn" onclick="closeOverlay()"></div>
+        <button class="nav-btn left" onclick="navigateImage(-1)">&lt;</button>
+        <button class="nav-btn right" onclick="navigateImage(1)">&gt;</button>
+    `;
+    overlay.classList.add('show');
+
+    // 이미지의 크기 조절
+    const overlayImage = overlay.querySelector('.overlay-img');
+    overlayImage.style.width = '40%';
+}
+
+    </script>
+</body>
+</html>
